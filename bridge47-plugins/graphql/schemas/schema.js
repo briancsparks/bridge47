@@ -43,10 +43,10 @@ let mongo;
 async function theContext(req, secrets) {
 //  console.log({headers, secrets}, arguments);
   if (!mongo) {
-    mongo = await MongoClient.connect('mongodb://10.12.21.229:27017/layer67');
+    mongo = await MongoClient.connect('mongodb://10.12.21.229:27017/bridge47');
   }
 
-  return { mongo: mongo.db('layer67') };
+  return { mongo: mongo.db('bridge47') };
 }
 
 

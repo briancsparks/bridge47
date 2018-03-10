@@ -270,10 +270,10 @@ if [[ -z $skip_ami ]]; then
   # Figure out the build number
   rm -f /tmp/amis.json
   aws ec2 describe-images --owners "$dev_acct_num" > /tmp/amis.json
-  build_num="$(cat /tmp/amis.json | jq -r '.Images[].Name' | egrep 'layer67-base-' | cut -d- -f3 | sort -n | tail -1)"
+  build_num="$(cat /tmp/amis.json | jq -r '.Images[].Name' | egrep 'bridge47-base-' | cut -d- -f3 | sort -n | tail -1)"
   build_num="$(($build_num + 1))"
 
-  ami_name="layer67-base-${build_num}"
+  ami_name="bridge47-base-${build_num}"
 
 
   # ---------- The create-image call ----------

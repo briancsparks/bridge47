@@ -19,7 +19,7 @@ ip="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].PrivateIpAddress')
 
 # ---------- Do a little setup ----------
 
-sshix $ip "local/scripts/01-bootstrap --setenv LAYER67_TIER fqdn-web-${stack}"
+sshix $ip "local/scripts/01-bootstrap --setenv BRIDGE47_TIER fqdn-web-${stack}"
 
 
 # ---------- Configure nginx ----------

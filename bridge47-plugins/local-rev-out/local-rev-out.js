@@ -26,7 +26,7 @@ const main = function(callback) {
   var   ip          = ARGV.ip       || '127.0.0.1';
   const port        = ARGV.port     || 5777;
 
-  const destUrlObj    = _.pick(urlLib.parse('https://l67console.mobilewebassist.net'), 'protocol', 'host');
+  const destUrlObj    = _.pick(urlLib.parse('https://b47console.mobilewebassist.net'), 'protocol', 'host');
 
   const server = http.createServer(function(req, res) {
 

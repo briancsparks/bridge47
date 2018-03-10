@@ -9,7 +9,7 @@ const awsService              = require('../../lib/aws-creds').awsService;
 var   MongoClient             = require('mongodb').MongoClient;
 const util                    = require('util');
 
-var   namespace               = process.env.NAMESPACE   || 'layer67';
+var   namespace               = process.env.NAMESPACE   || 'bridge47';
 
 const ARGV                    = sg.ARGV();
 const argvGet                 = sg.argvGet;
@@ -25,7 +25,7 @@ var   bootstrap;
 const main = async function() {
   return bootstrap(function(err, db, config) {
 
-    const configDb = db.db('layer67').collection('config');
+    const configDb = db.db('bridge47').collection('config');
 
     var result = {};
 
@@ -91,7 +91,7 @@ const main = async function() {
         prod  : 'vpc-fbd32082'
       };
 
-      const layer67Ami  = _.last(_.sortBy(_.filter(result.devImages.Images, i => /^layer67/.exec(i.Name)), 'Name'));
+      const bridge47Ami  = _.last(_.sortBy(_.filter(result.devImages.Images, i => /^bridge47/.exec(i.Name)), 'Name'));
       const vpcSgs      = _.filter(result.devSecurityGroups.SecurityGroups, sg => sg.VpcId === vpcs.dev);
       var   vpcSubnets  = _.filter(result.devSubnets.Subnets, sn => sn.VpcId === vpcs.dev);
 
@@ -121,7 +121,7 @@ const main = async function() {
             };
 
 //            configDb.update(query, sg._extend({
-//              ImageId             : layer67Ami.ImageId,
+//              ImageId             : bridge47Ami.ImageId,
 //              InstanceType        : 'c5.large',
 //              KeyName             : 'mario_demo',
 //            }, query), {

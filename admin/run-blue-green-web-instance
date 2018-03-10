@@ -28,7 +28,7 @@ ${scripts_dir}/aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$in
 
 # Setup for the following FQDNs  -- TODO: fix https
 curl -sS "http://$ip:12340/root-config"
-curl -sS "http://$ip:12340/server-config?fqdn=${color}-l67.${domain_name}&port=5779&http=1"
+curl -sS "http://$ip:12340/server-config?fqdn=${color}-b47.${domain_name}&port=5779&http=1"
 
 # ---------- Get the nginx conf files ----------
 
@@ -38,14 +38,14 @@ announce "Pushing certs to server"
 # =======================================================================
 
 # ----- color-test.mobilesebassist.net
-curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/${color2}-l67.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
+curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/${color2}-b47.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 
 ${scripts_dir}/push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"     || true
 ${scripts_dir}/push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"      || true
 ${scripts_dir}/push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert')" "$ip"   || true
 
 # Assign FQDN
-${scripts_dir}/assign-fqdn --fqdn="${color}-l67.${domain_name}" --ip=$ip --stack=${stack}
+${scripts_dir}/assign-fqdn --fqdn="${color}-b47.${domain_name}" --ip=$ip --stack=${stack}
 
 # Only start the server if the caller wants
 if [[ -z $delay_finishing ]]; then

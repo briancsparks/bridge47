@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 #
-# This is the startup script for starting a basic layer67 web-tier server.
+# This is the startup script for starting a basic bridge47 web-tier server.
 #
 #
 

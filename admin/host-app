@@ -8,6 +8,6 @@ eval "$(cli-shezargs $@)"
 [[ -z $stack        ]] && die "Need --stack="
 [[ -z $color        ]] && die "Need --color="
 
-cd "${scripts_dir}/../layer67-plugins/host-app"
+cd "${scripts_dir}/../bridge47-plugins/host-app"
 pm2 start host-app.js --name ${pm2_name} --watch -- --port=${port} --namespace=${ns} --stack=${stack} --color=${color}
 

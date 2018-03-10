@@ -46,8 +46,8 @@ const deref                   = sg.deref;
 const unhandled               = unhandledRoutes.unhandled;
 const redisPort               = argvGet(ARGV, 'redis-port')             || 6379;
 const redisHost               = argvGet(ARGV, 'redis-host')             || 'redis';
-var   namespace               = 'layer67';
-const argvStack               = ARGV.stack                              || process.env.LAYER67_STACK;
+var   namespace               = 'bridge47';
+const argvStack               = ARGV.stack                              || process.env.BRIDGE47_STACK;
 const argvColor               = ARGV.color;
 
 const redis                   = redisLib.createClient(redisPort, redisHost);
@@ -58,8 +58,8 @@ var   parseUrlForXapi;
 
 const main = function() {
   return bootstrap(function(err, db, config_) {
-    const adminsDb = db.db('layer67').collection('admins');
-    const configDb = db.db('layer67').collection('config');
+    const adminsDb = db.db('bridge47').collection('admins');
+    const configDb = db.db('bridge47').collection('config');
 
     const ip          = ARGV.ip       || '127.0.0.1';
     const port        = ARGV.port;
@@ -289,7 +289,7 @@ bootstrap = function(callback) {
 
   }, function(next) {
 
-    const configDb = db.db('layer67').collection('config');
+    const configDb = db.db('bridge47').collection('config');
 
     parseUrlForXapi = function(req, callback) {
       const url   = urlLib.parse(req.url, true);

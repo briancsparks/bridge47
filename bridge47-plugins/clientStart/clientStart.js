@@ -19,7 +19,7 @@ const deref                   = sg.deref;
 const unhandled               = unhandledRoutes.unhandled;
 const upsertOne               = dbUtil.upsertOne;
 
-var   namespace               = 'layer67';
+var   namespace               = 'bridge47';
 var   bootstrap;
 
 const main = function() {
@@ -33,7 +33,7 @@ const main = function() {
   }
 
   return bootstrap(function(err, db, config_) {
-    const configDb  = db.db('layer67').collection('config');
+    const configDb  = db.db('bridge47').collection('config');
 
     const server = http.createServer(function(req, res) {
 
@@ -92,13 +92,13 @@ const main = function() {
         return sg.__run2([function(next, last, abort) {
 
           //
-          //  Get the domain name of the endpoint from the layer67 config.
+          //  Get the domain name of the endpoint from the bridge47 config.
           //
-          //  Since layer67 controls the web-tier, we first get the config it uses.
+          //  Since bridge47 controls the web-tier, we first get the config it uses.
           //
 
           const query = {
-            projectId : 'l67',
+            projectId : 'b47',
             upstream  : {$exists:true}
           };
 

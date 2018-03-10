@@ -84,13 +84,13 @@ fi
 
 # EIPs
 if [[ $rel == dev ]]; then
-  lr put-cluster-db --key=fqdn-blue-l67-mobiledevassist-net --set=eip=eipalloc-72eef045
-  lr put-cluster-db --key=fqdn-teal-l67-mobiledevassist-net --set=eip=eipalloc-50f0ee67
+  lr put-cluster-db --key=fqdn-blue-b47-mobiledevassist-net --set=eip=eipalloc-72eef045
+  lr put-cluster-db --key=fqdn-teal-b47-mobiledevassist-net --set=eip=eipalloc-50f0ee67
 else
-  lr put-cluster-db --key=fqdn-l67hq-mobilewebassist-net --set=eip=eipalloc-64b5a653
+  lr put-cluster-db --key=fqdn-b47hq-mobilewebassist-net --set=eip=eipalloc-64b5a653
 
-  lr put-cluster-db --key=fqdn-blue-l67-mobilewebassist-net --set=eip=eipalloc-63ebf554
-  lr put-cluster-db --key=fqdn-teal-l67-mobilewebassist-net --set=eip=eipalloc-61ebf556
+  lr put-cluster-db --key=fqdn-blue-b47-mobilewebassist-net --set=eip=eipalloc-63ebf554
+  lr put-cluster-db --key=fqdn-teal-b47-mobilewebassist-net --set=eip=eipalloc-61ebf556
 fi
 
 

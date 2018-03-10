@@ -13,18 +13,18 @@ fi
 
 # ----- no-domain
 curl -sS "http://$ip:12340/file/etc/nginx/nginx.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
-sshix $ip "cd ~/dev/layer67/layer67-plugins/no-domain/ && pm2 start no-domain.js -- --port=$(cat /tmp/config.json | jq -r '.routerPort')"
+sshix $ip "cd ~/dev/bridge47/bridge47-plugins/no-domain/ && pm2 start no-domain.js -- --port=$(cat /tmp/config.json | jq -r '.routerPort')"
 
-# ----- l67console.mobilesebassist.net
-# Note: l67console is handled by the same handler as l67xapi
+# ----- b47console.mobilesebassist.net
+# Note: b47console is handled by the same handler as b47xapi
 
-# ----- l67xapi.mobilesebassist.net
-curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/l67xapi.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
-sshix $ip "cd ~/dev/layer67/layer67-plugins/xapi && pm2 start xapi-router.js --name xapi -- --stack=${stack} --port=$(cat /tmp/config.json | jq -r '.routerPort')"
+# ----- b47xapi.mobilesebassist.net
+curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/b47xapi.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
+sshix $ip "cd ~/dev/bridge47/bridge47-plugins/xapi && pm2 start xapi-router.js --name xapi -- --stack=${stack} --port=$(cat /tmp/config.json | jq -r '.routerPort')"
 
-# ----- l67hq.mobilesebassist.net
-curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/l67hq.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
-sshix $ip "cd ~/dev/layer67/layer67-plugins/clientStart && pm2 start clientStart.js --name cstart -- --port=$(cat /tmp/config.json | jq -r '.routerPort')"
+# ----- b47hq.mobilesebassist.net
+curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/b47hq.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
+sshix $ip "cd ~/dev/bridge47/bridge47-plugins/clientStart && pm2 start clientStart.js --name cstart -- --port=$(cat /tmp/config.json | jq -r '.routerPort')"
 
 # ----------- start nginx ----------
 sshix $ip "sudo nginx -t && sudo nginx"

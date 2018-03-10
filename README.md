@@ -1,5 +1,5 @@
-# layer67
-All the layer-6 and layer-7 stuff you need so you can just write your code for the cloud.
+# bridge47
+All the layer-4 and layer-7 stuff you need so you can just write your code for the cloud.
 
 Project Layout
 ==============
@@ -28,6 +28,6 @@ Stuff that Runs on Each Node
 ----------------------------
 
 * The `agent` gets run on each node.
-* the `layer67-plugins` get run on each node.
+* the `bridge47-plugins` get run on each node.
 
 

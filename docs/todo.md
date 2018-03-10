@@ -23,7 +23,7 @@ Next Milestone
 
 2
 
-* Spin up new serverassist stack, based on layer67
+* Spin up new serverassist stack, based on bridge47
 * Spin down 13 stack
 
 Then

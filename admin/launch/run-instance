@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 #
-# Launch an instance that does the basic layer67 functionality:
+# Launch an instance that does the basic bridge47 functionality:
 #
 # * Provides the world-facing instances that are hardened, fast and
 #   have all the features you expect in a 2018 stack.
@@ -91,10 +91,10 @@ fi
 
 rm -f /tmp/amis.json
 aws ec2 describe-images --owners "$dev_acct_num" > /tmp/amis.json
-build_num="$(cat /tmp/amis.json | jq -r '.Images[].Name' | egrep 'layer67-base-' | cut -d- -f3 | sort -n | tail -1)"
+build_num="$(cat /tmp/amis.json | jq -r '.Images[].Name' | egrep 'bridge47-base-' | cut -d- -f3 | sort -n | tail -1)"
 echo "build_num: $build_num"
 
-image_id="$(cat /tmp/amis.json | jq -r --arg x "layer67-base-${build_num}" '.Images[] | select( .Name | contains($x)) | .ImageId')"
+image_id="$(cat /tmp/amis.json | jq -r --arg x "bridge47-base-${build_num}" '.Images[] | select( .Name | contains($x)) | .ImageId')"
 echo "image_id: $image_id"
 
 # ----- Determine the sub-ips -----
@@ -116,7 +116,7 @@ fi
 [[ -n $instance_type  ]] && extraRiParams="${extraRiParams} --instance-type=${instance_type}"
 
 rm -f /tmp/run-instance-result.json
-ra invoke "$(fnn ~/dev 'layer67/lib/ec2Instance\.js')" runInstances --name="peach-${stack}-${tier}" ${extraRiParams} > /tmp/run-instance-result.json
+ra invoke "$(fnn ~/dev 'bridge47/lib/ec2Instance\.js')" runInstances --name="peach-${stack}-${tier}" ${extraRiParams} > /tmp/run-instance-result.json
 
 # The result JSON will be one line on error: '{}'
 [[ $(cat /tmp/run-instance-result.json | jq . | wc -l) == 1 ]] && die
@@ -134,7 +134,7 @@ cp  "/tmp/run-instance-result.json" "$uniq_log_filename"
 env_color="${color}"
 [[ -z ${env_color}  ]] && env_color="black"
 
-aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=tech,Value=layer67"
+aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=tech,Value=bridge47"
 
 [[ -n $ns           ]] && aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=namespace,Value=${ns}"
 [[ -n $env_color    ]] && aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=color,Value=${env_color}"
@@ -148,15 +148,15 @@ wait_for_start $ip
 #agent_ip="$(curl 'http://169.254.169.254/latest/meta-data/local-ipv4')"
 
 sshix $ip "local/scripts/01-bootstrap --setenv NAMESPACE $ns"
-sshix $ip "local/scripts/01-bootstrap --setenv L67_COLOR ${env_color}"
-sshix $ip "local/scripts/01-bootstrap --setenv L67_TIER  ${tier}"
+sshix $ip "local/scripts/01-bootstrap --setenv B47_COLOR ${env_color}"
+sshix $ip "local/scripts/01-bootstrap --setenv B47_TIER  ${tier}"
 
-sshix $ip "local/scripts/01-bootstrap --setenv L67_STACK ${stack}"
+sshix $ip "local/scripts/01-bootstrap --setenv B47_STACK ${stack}"
 if [[ ${stack} == prod ]]; then
   sshix $ip "local/scripts/01-bootstrap --setenv NODE_ENV production"
 fi
 
-sshix $ip "cd ~/dev/layer67 && git pull"
+sshix $ip "cd ~/dev/bridge47 && git pull"
 
 #push-changes-to $ip
 if [[ -n $pause ]]; then
@@ -167,8 +167,8 @@ if [[ -n $pause ]]; then
   echo
 fi
 
-sshix $ip "cd ~/dev/layer67 && npm install --production || true"
-sshix $ip 'cd ~/dev/layer67 && pm2 start layer67.js --name agent -- agent --main --ip=$(curl -sS "http://169.254.169.254/latest/meta-data/local-ipv4")'
+sshix $ip "cd ~/dev/bridge47 && npm install --production || true"
+sshix $ip 'cd ~/dev/bridge47 && pm2 start bridge47.js --name agent -- agent --main --ip=$(curl -sS "http://169.254.169.254/latest/meta-data/local-ipv4")'
 
 echo "Waiting to let instance start listening..."
 sleep 5
@@ -197,7 +197,7 @@ echo "sshix $ip"
 # This command will cause the instance to listen for the FQDN, as the default server, and requiring
 # client certificates. At startup, a list should be given.
 #
-# ra invoke lib/commands/configweb.js saveServerConfig --client-certs --default --fqdn=hq67.mobilewebassist.net
+# ra invoke lib/commands/configweb.js saveServerConfig --client-certs --default --fqdn=hq47.mobilewebassist.net
 #
 # * console.mobilewebassist.net.crt
 # * console.mobilewebassist.net.key
@@ -215,13 +215,13 @@ echo "sshix $ip"
 # Then, the FQDN configs need to be scanned for certs they need. To this end, the confs have a built-in
 # JSON object that can easily be found.
 #
-# cat /etc/nginx/sites-enabled/hq67.mobilewebassist.net.conf | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' | jq .
+# cat /etc/nginx/sites-enabled/hq47.mobilewebassist.net.conf | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' | jq .
 #
 #
 #
 # Then those certs can be retrieved and un-encrypted:
 #
-# ra invoke  ../dev/layer67/lib/crypto-kms.js decrypt --base=mobilewebprint_root_client_ca.crt
+# ra invoke  ../dev/bridge47/lib/crypto-kms.js decrypt --base=mobilewebprint_root_client_ca.crt
 #
 #
 #

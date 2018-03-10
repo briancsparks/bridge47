@@ -4,7 +4,7 @@
  */
 const sg                      = require('sgsg');
 const _                       = sg._;
-const layer67                 = sg.include('layer67') || require('layer67');
+const bridge47                 = sg.include('bridge47') || require('bridge47');
 const express                 = require('express');
 const bodyParser              = require('body-parser');
 const {
@@ -19,7 +19,7 @@ const setOnn                  = sg.setOnn;
 const deref                   = sg.deref;
 
 
-var   namespace               = 'layer67';
+var   namespace               = 'bridge47';
 const ip                      = ARGV.ip       || '127.0.0.1';
 const port                    = ARGV.port     || 3000;
 const stack                   = ARGV.stack    || null;
@@ -46,8 +46,8 @@ app.listen(port, () => {
   function tell() {
     setTimeout(tell, 15000);
 
-    layer67.tellStackService(`/${namespace}/graphql`, `http://${ip}:${port}`, 30000, stack, function(err) {
-      layer67.tellStackService(`/${namespace}`, `http://${ip}:${port}`, 30000, stack, function(err) {
+    bridge47.tellStackService(`/${namespace}/graphql`, `http://${ip}:${port}`, 30000, stack, function(err) {
+      bridge47.tellStackService(`/${namespace}`, `http://${ip}:${port}`, 30000, stack, function(err) {
       });
     });
   }

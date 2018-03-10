@@ -4,7 +4,7 @@
  *
  *  The create-stacks command builds the foundation for a cluster of instances. The
  *  cluster is to be used as the multiple stacks that go into a product (dev, int,
- *  stg, prod, etc.) Layer67 focuses on the network (layer 6 and 7) aspects of an
+ *  stg, prod, etc.) bridge47 focuses on the network (layer 6 and 7) aspects of an
  *  application -- both the client and the server.
  *
  *  This create-stacks script will configure various AWS resources to create the
@@ -472,7 +472,7 @@ lib.createPeeringTemplate = function() {
 
     const acctName              = argvGet(argv, u('acct',             '=83683',          'The account name.'));
     const stackName             = argvGet(argv, u('stack',            '=stackname',      'The stack name.'));
-    const vpcId                 = argvGet(argv, u('vpc-id,vpc',       '=[vpc-12345678]', 'The VPC.'));
+    const vpcId                 = argvGet(argv, u('vpc-id,vpc',       '=[vpc-12345478]', 'The VPC.'));
     const otherOwnerId          = argvGet(argv, u('owner-id2,owner2', '=[2222222]',      'The other account.'));
     const otherVpcId            = argvGet(argv, u('vpc-id2,vpc2',     '=[vpc-87654321]', 'The other VPC.'));
     const otherCidrBlock        = argvGet(argv, u('cidr2',            '=[10.4.0.0/0]',   'The other cidr block.'));
@@ -507,7 +507,7 @@ lib.createPeeringTemplate = function() {
 
       result.template = {
         AWSTemplateFormatVersion: '2010-09-09',
-        Description: `layer67 cf ${acctName} template for ${stackName}`,
+        Description: `bridge47 cf ${acctName} template for ${stackName}`,
         Mappings: {},
         Parameters: {},
         Resources: template,
@@ -831,7 +831,7 @@ lib.createStackTemplates = function() {
 
       result.dev = {
         AWSTemplateFormatVersion: '2010-09-09',
-        Description: `layer67 cf dev template for ${stackName}`,
+        Description: `bridge47 cf dev template for ${stackName}`,
         Mappings: {},
         Parameters: {},
         Resources: dev,
@@ -840,7 +840,7 @@ lib.createStackTemplates = function() {
 
       result.prod = {
         AWSTemplateFormatVersion: '2010-09-09',
-        Description: `layer67 cf prod template for ${stackName}`,
+        Description: `bridge47 cf prod template for ${stackName}`,
         Mappings: {},
         Parameters: {},
         Resources: prod,

@@ -246,7 +246,7 @@ lib.buildServerConfig = function() {
 
   var ra = raLib.adapt(arguments, (argv, context, callback) => {
 
-    const fqdn                = argvGet(argv, 'fqdn')                       || 'hq67.mobilewebassist.net';
+    const fqdn                = argvGet(argv, 'fqdn')                       || 'hq47.mobilewebassist.net';
     const fqdnParts           = fqdn.split('.');
     const domainName          = _.last(fqdnParts, 2).join('.');
     const siteName            = _.first(_.last(fqdnParts, 2));

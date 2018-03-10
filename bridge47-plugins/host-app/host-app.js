@@ -6,7 +6,7 @@
  *  to each other in any way. This one should restart the other one, or at
  *  the very least, stop sending the beacon if the real app fails.
  *
- *  Adds all the stuff that is needed to run in the Layer67 system, so
+ *  Adds all the stuff that is needed to run in the bridge47 system, so
  *  that any http server can work.
  *
  *    pm2 start host-app.js --name ${appName} --watch -- --port=3000 --namespace=foo --stack=test --color=lime
