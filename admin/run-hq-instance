@@ -1,4 +1,4 @@
-BRIDGE4/bash -e
+#!/bin/bash -e
 
 stack="cluster"
 domain_name="mobiledevassist.net"

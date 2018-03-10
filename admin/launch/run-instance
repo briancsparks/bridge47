@@ -53,21 +53,6 @@ wait_for_start() {
   sleep 1
 }
 
-#push_cert_to_server() {
-#  message="$1"
-#  fullpath="$2"
-#  ip="$3"
-#
-#  printf "push_cert_to_server %-14s %-20s %-60s" "$message" "$ip" "$fullpath"
-#
-#  if [[ -n $fullpath ]]; then
-#    ra invoke "$(fnn ~/dev 'crypto-kms\.js$')" pushCertToServer --ip=$ip --fullpath=$fullpath > /tmp/push-cert-to-server.json 2> /tmp/push-cert-to-server-error
-#    cat /tmp/push-cert-to-server.json | jq -r '.items[].size' || true
-#  else
-#    echo ""
-#  fi
-#}
-
 # =========================================================================================
 announce " Launching instance"
 # =========================================================================================

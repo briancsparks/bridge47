@@ -60,8 +60,8 @@ assign-fqdn --fqdn=b47hq.mobilewebassist.net --stack=prod --ip=${prod_ip}
 assign-fqdn --fqdn=b47hq.mobiledevassist.net --ip=${ip}
 
 #          ---- Promote the test color to be main
-ra invoke "\$(fnn ~/dev lib/cluster-db\.js$)" promoteToMain --project=${prj} --stack=${stack} --color=${color}
-ra invoke "\$(fnn ~/dev lib/cluster-db\.js$)" promoteRunConfigAmi
+ra invoke "\$(fnn ~/dev bridge47/lib/cluster-db\.js$)" promoteToMain --project=${prj} --stack=${stack} --color=${color}
+ra invoke "\$(fnn ~/dev bridge47/lib/cluster-db\.js$)" promoteRunConfigAmi
 
 -----------------------------------------------
 Interaction:
