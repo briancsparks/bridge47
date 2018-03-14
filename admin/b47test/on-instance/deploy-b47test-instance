@@ -4,7 +4,8 @@ eval "$(cli-shezargs $@)"
 
 [[ -z $color    ]] && die "Need --color="
 [[ -z $stack    ]] && die "Need --stack="
+[[ -z $project  ]] && die "Need --project="
 
 # Just get the echo server running
-(cd ~/dev/bridge47/bridge47-plugins/echo/ && pm2 start echo.js -- --port=5790 --color=${color} --stack=${stack})
+(cd ~/dev/bridge47/bridge47-plugins/echo/ && pm2 start echo.js -- --port=5790 --color=${color} --stack=${stack} --project=${project})
 

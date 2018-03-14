@@ -30,7 +30,7 @@ instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceI
 aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-grey-echo"
 
 # Deploy our code onto the new instance
-zoom-run --ip=${ip} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=grey --stack=test
+zoom-run --ip=${ip} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=grey --stack=test --project=b47test
 
 run-final-app-instance-start-tasks --ip=${ip}
 
@@ -43,7 +43,7 @@ instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceI
 aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-gold-echo"
 
 # Deploy our code onto the new instance
-zoom-run --ip=${ip} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=gold --stack=test
+zoom-run --ip=${ip} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=gold --stack=test --project=b47test
 
 run-final-app-instance-start-tasks --ip=${ip}
 

@@ -62,7 +62,7 @@ const main = function() {
       function tell() {
         setTimeout(tell, 15 * 1000);
         redisUtils.tellStackService(`/${project}/${color}`, `http://${ip}:${port}`, 30000, stack, function(err) {
-          redisUtils.tellStackService(`/${project}/xapi/v1/echo/${color}`, `http://${ip}:${port}`, 30000, stack, function(err) {
+          redisUtils.tellStackService(`/${project}/xapi/v1/${color}/echo`, `http://${ip}:${port}`, 30000, stack, function(err) {
           });
         });
       };
