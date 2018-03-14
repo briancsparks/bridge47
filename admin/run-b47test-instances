@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+#
+# Run a test hq server (grey), a web-instance (grey), and an echo server (grey and gold)
+#
+#
+#
+
+instance_type="t2.small"
+
+eval "$(cli-shezargs $@)"
+
+# ---------- hq ----------
+announce "run-hq-instance --color=grey --instance-type=${instance_type}"
+run-hq-instance --color=grey --instance-type=${instance_type}
+ip="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
+
+assign-fqdn --fqdn=b47hq.mobiledevassist.net --ip=${ip}
+
+# ---------- web-tier ----------
+announce "run-blue-green-web-instance --color=grey --stack=test --instance-type=${instance_type}"
+run-blue-green-web-instance --color=grey --stack=test --instance-type=${instance_type}
+
+# echo server ---------- grey ----------
+announce "run-app-instance --color=grey --stack=test --delay-finishing --instance-type=${instance_type}"
+run-app-instance --color=grey --stack=test --delay-finishing --instance-type=${instance_type}
+ip="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
+instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceId')"
+
+aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-grey-echo"
+
+# Deploy our code onto the new instance
+zoom-run --ip=${ip} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=grey --stack=test
+
+run-final-app-instance-start-tasks --ip=${ip}
+
+# echo server ---------- gold ----------
+announce "run-app-instance --color=gold --stack=test --delay-finishing --instance-type=${instance_type}"
+run-app-instance --color=gold --stack=test --delay-finishing --instance-type=${instance_type}
+ip="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
+instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceId')"
+
+aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-gold-echo"
+
+# Deploy our code onto the new instance
+zoom-run --ip=${ip} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=gold --stack=test
+
+run-final-app-instance-start-tasks --ip=${ip}
+

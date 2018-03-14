@@ -18,13 +18,14 @@ const deref                   = sg.deref;
 const unhandled               = unhandledRoutes.unhandled;
 const stack                   = ARGV.stack;
 const color                   = ARGV.color;
+const project                 = ARGV.project;
 
 const main = function() {
 
   const port        = ARGV.port;
 
-  if (!port || !color || !stack) {
-    console.log('Need --port= and --color= and --stack=');
+  if (!port || !color || !stack || !project) {
+    console.log('Need --port= and --color= and --stack= and --project=');
     process.exit(2);
   }
 
@@ -60,8 +61,8 @@ const main = function() {
       tell();
       function tell() {
         setTimeout(tell, 15 * 1000);
-        redisUtils.tellStackService('/echo', `http://${ip}:${port}`, 30000, stack, function(err) {
-          redisUtils.tellStackService(`/echo/xapi/v1/${color}`, `http://${ip}:${port}`, 30000, stack, function(err) {
+        redisUtils.tellStackService(`/${project}/${color}`, `http://${ip}:${port}`, 30000, stack, function(err) {
+          redisUtils.tellStackService(`/${project}/xapi/v1/echo/${color}`, `http://${ip}:${port}`, 30000, stack, function(err) {
           });
         });
       };

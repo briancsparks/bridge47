@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+eval "$(cli-shezargs $@)"
+
+[[ -z $color    ]] && die "Need --color="
+[[ -z $stack    ]] && die "Need --stack="
+
+# Just get the echo server running
+(cd ~/dev/bridge47/bridge47-plugins/echo/ && pm2 start echo.js -- --port=5790 --color=${color} --stack=${stack})
+

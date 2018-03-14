@@ -144,6 +144,7 @@ const main = function() {
               }
 
               result.upstream         = deref(item, ['upstream', stack]) || result.upstream;
+              result.upstream         = result.upstream.replace('/projectid/', `/${projectId}/`);
 
               // Translate 'upstream' into the actual fqdn
               item.upstreams[stack]   = sg.reduce(deref(item, ['upstreams', stack]) || {}, {}, function(m, value_, key) {
