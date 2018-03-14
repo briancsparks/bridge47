@@ -73,8 +73,9 @@ const main = function() {
 
         //console.log('/clientStart', {all, url:req.url, query: url.query, body:req.bodyJson});
 
-        const rsvr  = all.rsvr;
-        const stack = utils.stackForRsvr(rsvr) || 'prod';
+        const rsvr        = all.rsvr;
+        const stack       = utils.stackForRsvr(rsvr) || 'prod';
+        const mainOrNext  = utils.mainOrNextForRsvr(rsvr) || 'main';
 
         projectId = projectId || all.projectId || all.project;
 
@@ -91,10 +92,12 @@ const main = function() {
 
         return sg.__run2([function(next, last, abort) {
 
+          // --------------------------------------------------------------------------------------
           //
-          //  Get the domain name of the endpoint from the bridge47 config.
+          //  Get bridge47 web-tier endpoint domain name.
           //
-          //  Since bridge47 controls the web-tier, we first get the config it uses.
+          //  (Get the domain name of the endpoint from the bridge47 config.)
+          //  (Since bridge47 controls the web-tier, we first get the config it uses.)
           //
 
           const query = {
@@ -106,8 +109,8 @@ const main = function() {
             if (!sg.ok(err, items)) { console.error('find', query, err); return next(); }
 
             return sg.__each(items, function(item, nextItem) {
-              result.upstream   = item.upstream[stack] || result.upstream;
-              result.upstreams  = sg._extend(result.upstreams, (item.upstreams && item.upstreams[stack]) || {});
+              result.upstream   = deref(item, ['upstream', stack]) || result.upstream;
+              result.upstreams  = sg._extend(result.upstreams, deref(item, ['upstreams', stack]) || {});
 
               return nextItem();
             }, next);
@@ -116,8 +119,11 @@ const main = function() {
         }, function(next, last, abort) {
           if (!projectId)     { return next(); }
 
+          // --------------------------------------------------------------------------------------
           //
           //  Get the config from the requested project
+          //
+          //  (I.e. main --> blue)
           //
 
           const query = {
@@ -129,16 +135,30 @@ const main = function() {
             if (!sg.ok(err, items)) { console.error('find', query, err); return next(); }
 
             return sg.__each(items, function(item, nextItem) {
-              result.upstream         = (item.upstream && item.upstream[stack]) || result.upstream;
+              const upstreams         = deref(item, ['upstreams', stack]) || {};
+              var   color             = deref(item, [`${mainOrNext}Color`, stack]);
+
+              // The system will route to the main color by default. Do not include color if it was not requested
+              if (!rsvr) {
+                color = null;
+              }
+
+              result.upstream         = deref(item, ['upstream', stack]) || result.upstream;
 
               // Translate 'upstream' into the actual fqdn
-              item.upstreams[stack]   = sg.reduce(item.upstreams[stack], {}, function(m, value, key) {
+              item.upstreams[stack]   = sg.reduce(deref(item, ['upstreams', stack]) || {}, {}, function(m, value_, key) {
+                var value = value_;
+
                 if (value === 'upstream') {
-                  return sg.kv(m, key, result.upstream);
+                  value = result.upstream;
                 }
-                return sg.kv(m, key, value);
+
+                return sg.kv(m, key, _.compact([value, color]).join('/'));
               });
-              result.upstreams  = sg._extend(result.upstreams, (item.upstreams && item.upstreams[stack]) || {});
+              result.upstreams  = sg._extend(result.upstreams, deref(item, ['upstreams', stack]) || {});
+
+              // Update the upstream based on main/next
+              result.upstream   = _.compact([result.upstream, color]).join('/');
 
               return nextItem();
             }, next);
