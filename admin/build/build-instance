@@ -21,7 +21,7 @@ iam_instance_profile="Arn=arn:aws:iam::084075158741:instance-profile/${nsX}-web-
 #user_data="file://${userdata_file}"
 ip="10.${my_classb}.2.9"
 subnet_id="$my_subnet_id"
-image_id="ami-0b383171"
+image_id="ami-43a15f3e"
 count=1
 
 eval "$(cli-shezargs $@)"
@@ -89,11 +89,11 @@ aws_ec2() {
 # From: https://cloud-images.ubuntu.com/locator/ec2/
 # N.Virginia -- Search with 'us-east hvm ebs-ssd amd64 lts'
 #
-# This list fetched 02/11/2018
+# This list fetched 03/13/2018
 #
-# us-east-1  xenial   16.04 LTS  amd64  hvm:ebs-ssd  20180205  ami-0b383171  hvm
-# us-east-1  trusty   14.04 LTS  amd64  hvm:ebs-ssd  20180201  ami-a22323d8  hvm
-# us-east-1  precise  12.04 LTS  amd64  hvm:ebs-ssd  20170502  ami-a04529b6  hvm
+# us-east-1  xenial   16.04 LTS  amd64  hvm:ebs-ssd  20180306   ami-43a15f3e  hvm
+# us-east-1  trusty   14.04 LTS  amd64  hvm:ebs-ssd  20180222.1 ami-9ac624e7  hvm
+# us-east-1  precise  12.04 LTS  amd64  hvm:ebs-ssd  20170502   ami-a04529b6  hvm
 
 os_name="xenial"
 agent_port="12345"
