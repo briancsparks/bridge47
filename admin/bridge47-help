@@ -38,6 +38,7 @@ Starting Servers:
   --pause
 
 #          ---- Launch hq (/clientStart) server
+run-hq-instance --color=${color}
 run-hq-instance --stack=${stack} --color=${color}
 
 #          ---- Launch web-tier
