@@ -1,5 +1,11 @@
 
 /**
+ *  For working on a local workstation.
+ *
+ *  $ [cd bridge47]
+ *  $ pm2 start bridge47-plugins/local-rev-out/local-rev-out.js --watch -- --port=5777 --main
+ *  $ sudo nginx -t && sudo nginx
+ *
  *
  */
 const sg                      = require('sgsg');
@@ -23,10 +29,14 @@ var lib = {};
 
 const main = function(callback) {
 
-  var   ip          = ARGV.ip       || '127.0.0.1';
-  const port        = ARGV.port     || 5777;
+  var   ip          = ARGV.ip           || '127.0.0.1';
+  const port        = ARGV.port         || 5777;
+  const protocol    = ARGV.protocol     || 'https';
+  const domainName  = ARGV.domain       || 'mobilewebassist.net';
+  const subDomain   = ARGV.sub_domain   || 'b47console';
+  const targetFqdn  = ARGV.target       || `${subDomain}.${domainName}`;
 
-  const destUrlObj    = _.pick(urlLib.parse('https://b47console.mobilewebassist.net'), 'protocol', 'host');
+  const destUrlObj    = _.pick(urlLib.parse(`${protocol}://${targetFqdn}`), 'protocol', 'host');
 
   const server = http.createServer(function(req, res) {
 
