@@ -43,7 +43,7 @@ const main = function() {
     _.extend(result, {headers: req.headers});
 
     console.log('Echoing: '+req.url);
-    return sg._200(req, res, result);
+    return sg._200(req, res, result, {}, {"X-B47-Echo-Color" : process.env.B47_COLOR || 'nocolor'});
   });
 
   return request.get('http://169.254.169.254/latest/meta-data/local-ipv4').end((err, result) => {

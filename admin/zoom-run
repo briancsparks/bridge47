@@ -7,11 +7,13 @@ eval "$(cli-shezargs $@)"
 
 [[ -z $ip       ]] && die "Need --ip="
 [[ -z $script   ]] && die "Need --script="
+[[ -z $project  ]] && die "Need --project="
 
 search="label=${label}"
 
 [[ -n $color    ]] && search="${search}&color=${color}"
 [[ -n $stack    ]] && search="${search}&stack=${stack}"
+[[ -n $project  ]] && search="${search}&project=${project}"
 
 echo "zoom-run" curl -sS "http://${ip}:${agent_port}/run/sh?${search}" -F "script=@${script}"
 curl -sS "http://${ip}:${agent_port}/run/sh?${search}" -F "script=@${script}" | jq '.'
