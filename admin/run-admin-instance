@@ -4,7 +4,7 @@ eval "$(cli-shezargs $@)"
 
 ns="$NAMESPACE"
 
-die "This script does not really work"
+die "This script does not really work -- use build-instance --skip-ami ... instead"
 
 ${scripts_dir}/launch/run-instance --stack=dev --tier=app "$@"
 
