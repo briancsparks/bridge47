@@ -45,18 +45,18 @@ announce "Pushing certs to server"
 # ----- b47console.mobilewebassist.net
 curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/b47console.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 
-push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"     || true
-push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"      || true
-push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert')" "$ip"   || true
+push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"
+push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"
+push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert')" "$ip"
 
 
 
 # ----- b47hq.mobilewebassist.net
 curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/b47hq.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 
-push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"   || true
-push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"    || true
-push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert')" "$ip" || true
+push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"
+push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"
+push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert')" "$ip"
 
 
 # Only start the server if the caller wants

@@ -40,9 +40,9 @@ announce "Pushing certs to server"
 # ----- color-test.mobiledevassist.net
 curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/${color}-b47.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 
-${scripts_dir}/push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"     || true
-${scripts_dir}/push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"      || true
-${scripts_dir}/push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert')" "$ip"   || true
+${scripts_dir}/push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"
+${scripts_dir}/push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"
+${scripts_dir}/push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert')" "$ip"
 
 # Assign FQDN
 ${scripts_dir}/assign-fqdn --fqdn="${color}-b47.${domain_name}" --ip=$ip --stack=${stack}

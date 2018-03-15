@@ -9,12 +9,18 @@ ip="$3"
 printf "push-cert-to-server %-14s %-20s %-60s" "$message" "$ip" "$fullpath "
 
 if [[ -n $fullpath ]]; then
-  rm /tmp/push-cert-to-server-error
-  ra invoke `find ~/dev -type f | egrep 'bridge47/lib/crypto-kms\.js$'` pushCertToServer --ip=$ip --fullpath=$fullpath > /tmp/push-cert-to-server.json 2> /tmp/push-cert-to-server-error
-  [[ -f /tmp/push-cert-to-server-error ]] && cat /tmp/push-cert-to-server-error
+  rm -f /tmp/push-cert-to-server-error
+
+  mkdir -p ~/stmp
+  if ! ra invoke `find ~/dev -type f | egrep 'bridge47/lib/crypto-kms\.js$'` pushCertToServer --ip=$ip --fullpath=$fullpath > /tmp/push-cert-to-server.json 2> /tmp/push-cert-to-server-error; then
+    [[ -f /tmp/push-cert-to-server-error ]] && cat /tmp/push-cert-to-server-error
+    echo ""
+    exit 5
+  fi
 
   cat /tmp/push-cert-to-server.json | jq -r '.items[].size' || echo "0"
 else
-  printf "0\n"
+  echo "0"
 fi
+
 
