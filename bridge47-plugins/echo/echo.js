@@ -55,14 +55,20 @@ const main = function() {
 
     ip  = ARGV.ip || ip || '127.0.0.1';
 
+    const projectRoute = `/${project}/${color}`;
+    const xapiRoute    = `/${project}/xapi/v1/${color}/echo`;
+
+    console.log(`echo handling ${projectRoute}`);
+    console.log(`echo handling ${xapiRoute}`);
+
     return server.listen(port, ip, function() {
       console.log(`Listening on ${ip}:${port}`);
 
       tell();
       function tell() {
         setTimeout(tell, 15 * 1000);
-        redisUtils.tellStackService(`/${project}/${color}`, `http://${ip}:${port}`, 30000, stack, function(err) {
-          redisUtils.tellStackService(`/${project}/xapi/v1/${color}/echo`, `http://${ip}:${port}`, 30000, stack, function(err) {
+        redisUtils.tellStackService(projectRoute, `http://${ip}:${port}`, 30000, stack, function(err) {
+          redisUtils.tellStackService(xapiRoute, `http://${ip}:${port}`, 30000, stack, function(err) {
           });
         });
       };
