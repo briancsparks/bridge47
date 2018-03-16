@@ -105,6 +105,26 @@ test.cb('echo next comes from gold', t => {
   });
 });
 
+test.cb('xapi echo comes from grey', t => {
+  const url = `http://b47xapi.mobiledevassist.net/b47test/xapi/v1/echo?rsvr=hqqa`;
+  getJson(t, url, (err, body, result) => {
+    log(t, {err, body, header: result.header});
+
+    t.is(result.header['x-b47-echo-color'], 'grey');
+    t.end();
+  });
+});
+
+test.cb('xapi echo next comes from gold', t => {
+  const url = `http://b47xapi.mobiledevassist.net/b47test/xapi/v1/echo?rsvr=hqqanext`;
+  getJson(t, url, (err, body, result) => {
+    log(t, {err, body, header: result.header});
+
+    t.is(result.header['x-b47-echo-color'], 'gold');
+    t.end();
+  });
+});
+
 
 // Normal, sync
 xtest('foo', t => {
