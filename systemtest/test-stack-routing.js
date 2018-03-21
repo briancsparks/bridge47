@@ -7,12 +7,21 @@ const _                       = sg._;
 const request                 = sg.extlibs.superagent;
 const urlLib                  = require('url');
 
+const ARGV                    = sg.ARGV();
+
+// TODO: ARGV will not work. ava does not pass along args. use env vars.
+const mainColor               = ARGV.main_color || 'grey';
+const nextColor               = ARGV.next_color || 'gold';
+const stack                   = ARGV.stack      || 'test';
+
+var   rsvrMain                = stack === 'test' ? 'hqqa'       : 'prod';
+var   rsvrNext                = stack === 'test' ? 'hqqanext'   : 'stg';
+const hqFqdn                  = stack === 'test' ? 'b47hq.mobiledevassist.net'   : 'b47hq2.mobilewebassist.net';
+const xapiFqdn                = stack === 'test' ? 'b47xapi.mobiledevassist.net' : 'b47xapi2.mobilewebassist.net';
+
 const test                    = require('ava');
-
+console.log({stack, rsvrMain});
 const numGetJsonPlan          = 3;
-
-var xtest = function(){}
-xtest.cb = function(){}
 
 // Unconditional:
 // t.pass('[message]');
@@ -35,10 +44,10 @@ xtest.cb = function(){}
 //
 // t.skip.is(foo(), 5);
 
-test.cb('b47test main is grey', t => {
+test.cb(`b47test main is ${mainColor}`, t => {
   t.plan(2 + numGetJsonPlan);
 
-  const url = `http://b47hq.mobiledevassist.net/b47test/clientStart?rsvr=hqqa`;
+  const url = `http://${hqFqdn}/b47test/clientStart?rsvr=${rsvrMain}`;
   getJson(t, url, (err, body) => {
     const echoUrl = sg.deref(body, 'upstreams.echo');
 
@@ -50,17 +59,17 @@ test.cb('b47test main is grey', t => {
       const url       = urlLib.parse(echoUrl, true);
       const mainColor = _.last(_.compact(url.pathname.split('/')));
 
-      t.is(mainColor, 'grey');
+      t.is(mainColor, `${mainColor}`);
     }
     t.end();
   });
 
 });
 
-test.cb('b47test next is gold', t => {
+test.cb(`b47test next is ${nextColor}`, t => {
   t.plan(2 + numGetJsonPlan);
 
-  const url = `http://b47hq.mobiledevassist.net/b47test/clientStart?rsvr=hqqanext`;
+  const url = `http://${hqFqdn}/b47test/clientStart?rsvr=${rsvrNext}`;
   getJson(t, url, (err, body) => {
     const echoUrl = sg.deref(body, 'upstreams.echo');
 
@@ -72,80 +81,59 @@ test.cb('b47test next is gold', t => {
       const url       = urlLib.parse(echoUrl, true);
       const mainColor = _.last(_.compact(url.pathname.split('/')));
 
-      t.is(mainColor, 'gold');
+      t.is(mainColor, `${nextColor}`);
     }
     t.end();
   });
 
 });
 
-test.cb('echo comes from grey', t => {
-  const url = `http://b47hq.mobiledevassist.net/b47test/clientStart?rsvr=hqqa`;
+test.cb(`echo comes from ${mainColor}`, t => {
+  const url = `http://${hqFqdn}/b47test/clientStart?rsvr=${rsvrMain}`;
   getJson(t, url, (err, body) => {
     const echoUrl = sg.deref(body, 'upstreams.echo');
     return getJson(t, `${echoUrl}/echo`, (err, body, result) => {
       log(t, {err, body, header: result.header});
 
-      t.is(result.header['x-b47-echo-color'], 'grey');
+      t.is(result.header['x-b47-echo-color'], `${mainColor}`);
       t.end();
     });
   });
 });
 
-test.cb('echo next comes from gold', t => {
-  const url = `http://b47hq.mobiledevassist.net/b47test/clientStart?rsvr=hqqanext`;
+test.cb(`echo next comes from ${nextColor}`, t => {
+  const url = `http://${hqFqdn}/b47test/clientStart?rsvr=${rsvrNext}`;
   getJson(t, url, (err, body) => {
     const echoUrl = sg.deref(body, 'upstreams.echo');
     return getJson(t, `${echoUrl}/echo`, (err, body, result) => {
       log(t, {err, body, header: result.header});
 
-      t.is(result.header['x-b47-echo-color'], 'gold');
+      t.is(result.header['x-b47-echo-color'], `${nextColor}`);
       t.end();
     });
   });
 });
 
-test.cb('xapi echo comes from grey', t => {
-  const url = `http://b47xapi.mobiledevassist.net/b47test/xapi/v1/echo?rsvr=hqqa`;
+test.cb(`xapi echo comes from ${mainColor}`, t => {
+  const url = `http://${xapiFqdn}/b47test/xapi/v1/echo?rsvr=${rsvrMain}`;
   getJson(t, url, (err, body, result) => {
     log(t, {err, body, header: result.header});
 
-    t.is(result.header['x-b47-echo-color'], 'grey');
+    t.is(result.header['x-b47-echo-color'], `${mainColor}`);
     t.end();
   });
 });
 
-test.cb('xapi echo next comes from gold', t => {
-  const url = `http://b47xapi.mobiledevassist.net/b47test/xapi/v1/echo?rsvr=hqqanext`;
+test.cb(`xapi echo next comes from ${nextColor}`, t => {
+  const url = `http://${xapiFqdn}/b47test/xapi/v1/echo?rsvr=${rsvrNext}`;
   getJson(t, url, (err, body, result) => {
     log(t, {err, body, header: result.header});
 
-    t.is(result.header['x-b47-echo-color'], 'gold');
+    t.is(result.header['x-b47-echo-color'], `${nextColor}`);
     t.end();
   });
 });
 
-
-// Normal, sync
-xtest('foo', t => {
-  t.pass();
-});
-
-// Async / await
-xtest('bar', async t => {
-  const bar = Promise.resolve('bar');
-
-  t.is(await bar, 'bar');
-});
-
-// Promisified
-xtest(t => {
-  t.plan(1);
-
-  return Promise.resolve(3).then(n => {
-    t.is(n, 3);
-  });
-});
 
 function log(t, arg1, ...args) {
   _.each(arg1, (value, key) => {
