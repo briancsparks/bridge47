@@ -7,47 +7,67 @@
 #
 
 instance_type="t2.small"
+main_color="grey"
+next_color="gold"
 
 eval "$(cli-shezargs $@)"
 
+if [[ -n $stack ]]; then
+  if [[ $stack == prod ]]; then
+    hq_extra=" --stack=${stack} --hq-subd=b47hq2 --xapi-subd=b47xapi2"
+    ti_extra=" --profile=prod"
+  fi
+else
+  stack="test"
+fi
+
+if [[ $stack == prod ]]; then
+  assumed_acct="pub"
+fi
+
 # ---------- hq ----------
-announce "run-hq-instance --color=grey --instance-type=${instance_type}"
-run-hq-instance --color=grey --instance-type=${instance_type}
+announce "run-hq-instance --color=${main_color} --instance-type=${instance_type} ${hq_extra}"
+run-hq-instance --color=${main_color} --instance-type=${instance_type} ${hq_extra}
 ipA="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
 
-assign-fqdn --fqdn=b47hq.mobiledevassist.net --ip=${ipA}
+if [[ $stack == test ]]; then
+  assign-fqdn --fqdn=b47hq.mobiledevassist.net --ip=${ipA}
+else
+  assign-fqdn --fqdn=b47hq2.mobilewebassist.net --ip=${ipA} --stack=${stack}
+  #echo "----------------------- Skipping assigning fqdn -------------------------"
+fi
 
 # ---------- web-tier ----------
-announce "run-blue-green-web-instance --color=grey --stack=test --instance-type=${instance_type}"
-run-blue-green-web-instance --color=grey --stack=test --instance-type=${instance_type}
+announce "run-blue-green-web-instance --color=${main_color} --stack=${stack} --instance-type=${instance_type}"
+run-blue-green-web-instance --color=${main_color} --stack=${stack} --instance-type=${instance_type}
 ipB="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
 
 # echo server ---------- grey ----------
-announce "run-app-instance --color=grey --stack=test --delay-finishing --instance-type=${instance_type}"
-run-app-instance --color=grey --stack=test --delay-finishing --instance-type=${instance_type}
+announce "run-app-instance --color=${main_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
+run-app-instance --color=${main_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}
 ipC="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
 instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceId')"
 
-aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-grey-echo"
+aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-${main_color}-echo"
 
 # Deploy our code onto the new instance
-zoom-run --ip=${ipC} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=grey --stack=test --project=b47test
+zoom-run --ip=${ipC} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=${main_color} --stack=${stack} --project=b47test
 
 run-final-app-instance-start-tasks --ip=${ipC}
 
 # echo server ---------- gold ----------
-announce "run-app-instance --color=gold --stack=test --delay-finishing --instance-type=${instance_type}"
-run-app-instance --color=gold --stack=test --delay-finishing --instance-type=${instance_type}
+announce "run-app-instance --color=${next_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
+run-app-instance --color=${next_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}
 ipD="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
 instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceId')"
 
-aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-gold-echo"
+aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-${next_color}-echo"
 
 # Deploy our code onto the new instance
-zoom-run --ip=${ipD} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=gold --stack=test --project=b47test
+zoom-run --ip=${ipD} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=${next_color} --stack=${stack} --project=b47test
 
 run-final-app-instance-start-tasks --ip=${ipD}
 
 echo ""
-echo " terminate-instances $ipA $ipB $ipC $ipD"
+echo " terminate-instances $ipA $ipB $ipC $ipD ${ti_extra}"
 

@@ -6,6 +6,10 @@ domain_name="mobiledevassist.net"
 sconfig_client="&client_certs=1"
 sconfig_https="&https=1"
 
+hq_subd="b47hq"
+xapi_subd="b47xapi"
+console_subd="b47console"
+
 eval "$(cli-shezargs $@)"
 
 ns="$NAMESPACE"
@@ -30,10 +34,10 @@ ${scripts_dir}/aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$in
 
 # Setup for the following FQDNs
 curl -sS "http://$ip:12340/root-config"
-curl -sS "http://$ip:12340/server-config?fqdn=b47console.${domain_name}&port=5778${sconfig_client}${sconfig_https}"
-#curl -sS "http://$ip:12340/server-config?fqdn=b47xapi.${domain_name}&port=5778${sconfig_client}${sconfig_https}"
-curl -sS "http://$ip:12340/server-config?fqdn=b47xapi.${domain_name}&port=5778&http=1"
-curl -sS "http://$ip:12340/server-config?fqdn=b47hq.${domain_name}&port=5777${sconfig_https}"
+curl -sS "http://$ip:12340/server-config?fqdn=${console_subd}.${domain_name}&port=5778${sconfig_client}${sconfig_https}"
+#curl -sS "http://$ip:12340/server-config?fqdn=${xapi_subd}.${domain_name}&port=5778${sconfig_client}${sconfig_https}"
+curl -sS "http://$ip:12340/server-config?fqdn=${xapi_subd}.${domain_name}&port=5778&http=1"
+curl -sS "http://$ip:12340/server-config?fqdn=${hq_subd}.${domain_name}&port=5777${sconfig_https}"
 
 # ---------- Get the nginx conf files ----------
 
@@ -43,7 +47,7 @@ announce "Pushing certs to server"
 # =======================================================================
 
 # ----- b47console.mobilewebassist.net
-curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/b47console.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
+curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/${console_subd}.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 
 push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"
 push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"
@@ -52,7 +56,7 @@ push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert
 
 
 # ----- b47hq.mobilewebassist.net
-curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/b47hq.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
+curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/${hq_subd}.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 
 push-cert-to-server "ssh_cert"      "$(cat /tmp/config.json | jq -r '.certfile')" "$ip"
 push-cert-to-server "ssh_key"       "$(cat /tmp/config.json | jq -r '.keyfile')" "$ip"
