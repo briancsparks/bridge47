@@ -332,8 +332,8 @@ bootstrap = function(callback) {
         });
       };
 
-      color           = 'main';
-      requestedStack  = utils.stackForRsvr(url.query.rsvr) || argvStack;
+      color           = utils.mainOrNextForRsvr(url.query.rsvr)   || 'main';
+      requestedStack  = utils.stackForRsvr(url.query.rsvr)        || argvStack;
 
       // Get projectId
       projectId   = parts.shift();
