@@ -100,10 +100,14 @@ const main = function() {
           //  (Since bridge47 controls the web-tier, we first get the config it uses.)
           //
 
-          const query = {
+          var   query = {
             projectId : 'b47',
             upstream  : {$exists:true}
           };
+
+          if (projectId === 'b47test') {
+            query.projectId = projectId;
+          }
 
           return configDb.find(query, {projection:{_id:0}}).toArray(function(err, items) {
             if (!sg.ok(err, items)) { console.error('find', query, err); return next(); }
