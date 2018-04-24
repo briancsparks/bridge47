@@ -65,6 +65,11 @@ push-cert-to-server "client_cert"   "$(cat /tmp/config.json | jq -r '.clientCert
 
 # Only start the server if the caller wants
 if [[ -z $delay_finishing ]]; then
-  ${scripts_dir}/run-final-hq-start-tasks --ip=${ip} --stack=${stack}
+
+  [[ -n ${hq_subd}        ]] && extra_args="${extra_args} --hq-subd=${hq_subd}"
+  [[ -n ${xapi_subd}      ]] && extra_args="${extra_args} --xapi-subd=${xapi_subd}"
+  [[ -n ${console_subd}   ]] && extra_args="${extra_args} --console-subd=${console_subd}"
+
+  ${scripts_dir}/run-final-hq-start-tasks --ip=${ip} --stack=${stack} ${extra_args}
 fi
 

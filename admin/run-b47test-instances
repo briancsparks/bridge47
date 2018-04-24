@@ -14,7 +14,7 @@ eval "$(cli-shezargs $@)"
 
 if [[ -n $stack ]]; then
   if [[ $stack == prod ]]; then
-    hq_extra=" --stack=${stack} --hq-subd=b47hq2 --xapi-subd=b47xapi2"
+    hq_extra=" --stack=${stack} --hq-subd=b47hq2 --xapi-subd=b47xapi2 --console-subd=b47console2"
     ti_extra=" --profile=prod"
   fi
 else

@@ -1,6 +1,9 @@
 #!/bin/bash -e
 
 domain_name="mobiledevassist.net"
+hq_subd="b47hq"
+xapi_subd="b47xapi"
+console_subd="b47console"
 
 eval "$(cli-shezargs $@)"
 
@@ -19,11 +22,11 @@ sshix $ip "cd ~/dev/bridge47/bridge47-plugins/no-domain/ && pm2 start no-domain.
 # Note: b47console is handled by the same handler as b47xapi
 
 # ----- b47xapi.mobilesebassist.net
-curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/b47xapi.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
+curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/${xapi_subd}.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 sshix $ip "cd ~/dev/bridge47/bridge47-plugins/xapi && pm2 start xapi-router.js --name xapi -- --stack=${stack} --port=$(cat /tmp/config.json | jq -r '.routerPort')"
 
 # ----- b47hq.mobilesebassist.net
-curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/b47hq.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
+curl -sS "http://$ip:12340/file/etc/nginx/sites-enabled/${hq_subd}.${domain_name}.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 sshix $ip "cd ~/dev/bridge47/bridge47-plugins/clientStart && pm2 start clientStart.js --name cstart -- --port=$(cat /tmp/config.json | jq -r '.routerPort')"
 
 # ----------- start nginx ----------
