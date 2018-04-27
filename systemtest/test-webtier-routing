@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+eval "$(cli-shezargs $@)"
+
+[[ -n $main_color   ]] && export TEST_MAINCOLOR="$main_color"
+[[ -n $next_color   ]] && export TEST_NEXTCOLOR="$next_color"
+[[ -n $stack        ]] && export TEST_STACK="$stack"
+
+ava --verbose systemtest/test-webtier-routing.js
+
