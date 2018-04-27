@@ -76,6 +76,6 @@ zoom-run --ip=${ipD} --label=ingest --script="${scripts_dir}/b47test/on-instance
 run-final-app-instance-start-tasks --ip=${ipD}
 
 echo ""
-echo " terminate-instances $ipA $ipB $ipC $ipD ${ti_extra}"
+echo " terminate-instances $ipA $ipC $ipD $ipB ${ti_extra}"
 echo " terminate-instances $ipA $ipC $ipD ${ti_extra}"
 

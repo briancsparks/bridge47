@@ -1,5 +1,12 @@
 #!/bin/bash -e
 
+#
+# Finalize work for an app instance:
+#
+# 1. Run xapi router
+# 2. Start nginx
+#
+
 eval "$(cli-shezargs $@)"
 
 [[ -z $ip   ]] && die "Need --ip="
