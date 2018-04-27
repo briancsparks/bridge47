@@ -25,6 +25,8 @@ if [[ $stack == prod ]]; then
   assumed_acct="pub"
 fi
 
+[[ -z $webtier_color  ]] && webtier_color="$main_color"
+
 # ---------- hq ----------
 announce "run-hq-instance --color=${main_color} --instance-type=${instance_type} ${hq_extra}"
 run-hq-instance --color=${main_color} --instance-type=${instance_type} ${hq_extra}
@@ -38,9 +40,14 @@ else
 fi
 
 # ---------- web-tier ----------
-announce "run-blue-green-web-instance --color=${main_color} --stack=${stack} --instance-type=${instance_type}"
-run-blue-green-web-instance --color=${main_color} --stack=${stack} --instance-type=${instance_type}
+announce "run-blue-green-web-instance --color=${webtier_color} --stack=${stack}"
+#run-blue-green-web-instance --color=${webtier_color} --stack=${stack} --instance-type=${instance_type}
+run-blue-green-web-instance --color=${webtier_color} --stack=${stack}
 ipB="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
+
+# Update the DB, so that the project `b47test` has the just-set color for the web-tier
+ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack="${stack}" --project-id=b47test --color="${webtier_color}"
+
 
 # echo server ---------- grey ----------
 announce "run-app-instance --color=${main_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
@@ -70,4 +77,5 @@ run-final-app-instance-start-tasks --ip=${ipD}
 
 echo ""
 echo " terminate-instances $ipA $ipB $ipC $ipD ${ti_extra}"
+echo " terminate-instances $ipA $ipC $ipD ${ti_extra}"
 

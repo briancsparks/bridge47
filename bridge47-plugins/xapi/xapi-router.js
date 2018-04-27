@@ -143,6 +143,21 @@ const main = function() {
 
         }, function(next) {
 
+          // Is the request for the web-tiers color?
+          if (projectId !== 'echowebtiercolor') { return next(); }
+
+          var result = {};
+
+          _.each(process.env, (value, key) => {
+            if (key.match(/^B47_/)) {
+              result[key] = value;
+            }
+          });
+
+          return next();
+
+        }, function(next) {
+
           // We do not route to root
           if (parts.length === 0)     { return sg._400(req, res); }
           return next();
