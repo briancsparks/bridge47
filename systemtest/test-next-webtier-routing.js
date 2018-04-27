@@ -48,7 +48,6 @@ const numGetJsonPlan          = 3;
 
 
 test.cb(`hq routes to next (${nextColor}) when using b47test`, t => {
-  t.plan(2 + numGetJsonPlan);
 
   const url = `http://${hqFqdn}/b47test/clientStart?rsvr=${rsvrNext}`;
   getJson(t, url, (err, body) => {
@@ -60,10 +59,20 @@ test.cb(`hq routes to next (${nextColor}) when using b47test`, t => {
 
       const url             = urlLib.parse(echoUrl, true);
       const foundNextColor  = _.first(_.compact(url.hostname.split('-')));
+      const echoWtcUrl      = `${url.protocol}//${url.hostname}/echowebtiercolor`;
 
       log(t, {echoUrl, nextColor, foundNextColor});
 
       t.is(foundNextColor, `${nextColor}`);
+
+      return getJson(t, echoWtcUrl, (err, body, result) => {
+        log(t, {body});
+
+        const b47_color = body && body.B47_COLOR;
+        t.is(b47_color, `${nextColor}`);
+        t.end();
+      });
+
     }
     t.end();
   });

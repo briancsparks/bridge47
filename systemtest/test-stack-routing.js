@@ -113,6 +113,27 @@ test.cb(`b47test next is ${nextColor}`, t => {
 });
 
 /**
+ *  Confirms that when /.../clientStart is called, that the web-tier is the right color.
+ */
+test.cb(`webtier is right color`, t => {
+  const url = `http://${hqFqdn}/b47test/clientStart?rsvr=${rsvrMain}`;
+  getJson(t, url, (err, body) => {
+    const echoUrl = sg.deref(body, 'upstreams.echo');
+    const echoUrlObj  = urlLib.parse(echoUrl);
+    const webTierColor  = (echoUrlObj.hostname.split('-')[0] || '');
+    const echoWtcUrl  = `${echoUrlObj.protocol}//${echoUrlObj.hostname}/echowebtiercolor`;
+
+    return getJson(t, echoWtcUrl, (err, body, result) => {
+
+      const b47_color = body.B47_COLOR;
+      log(t, {echoWtcUrl, b47_color, webTierColor});
+      t.is(b47_color, webTierColor);
+      t.end();
+    });
+  });
+});
+
+/**
  *  Confirm that when a request for main happens (for api), that is is served
  *  up by an instance of that color (grey by default.)
  */

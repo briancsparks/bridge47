@@ -81,7 +81,8 @@ ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" promoteRunConfigAmi
 * Deploy instances to prod stacks.
 
 ```
-run-b47test-instances --stack=prod --webtier-color= -nextcolor-
+run-b47test-instances --stack=prod --webtier-color=blue
+run-b47test-instances --stack=prod --webtier-color=teal
 ```
 
 * Test from workstation
@@ -89,27 +90,30 @@ run-b47test-instances --stack=prod --webtier-color= -nextcolor-
 
 ```
 ./systemtest/test-stack-routing --stack=prod
-./systemtest/test-next-webtier-routing --next-color= -nextcolor-
+./systemtest/test-next-webtier-routing --next-color=blue
+./systemtest/test-next-webtier-routing --next-color=teal
 ```
-
-* Shut down all instances except the web-tier
 
 
 Cut-over to New Web-Tier
 ------------------------
 
-Once you are confident that the new web-tier is ready, cut-over to it.
+* Once you are confident that the new web-tier is ready, cut-over to it.
 
 ```
-ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack=prod --color= -nextcolor-
+ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack=prod --color=blue
+ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack=prod --color=teal
 ```
 
-Then test that the cut-over worked.
+* Then test that the cut-over worked.
 
 ```
 ./systemtest/test-stack-routing --stack=prod --hq-subdomain=b47hq --xapi-subdomain=b47xapi
-./systemtest/test-webtier-routing --main-color= -nextcolor-
+./systemtest/test-webtier-routing --main-color=blue
+./systemtest/test-webtier-routing --main-color=teal
 ```
+
+* Shut down all instances except the web-tier
 
 Deploy New Production hq Server
 -------------------------------
@@ -119,6 +123,7 @@ This is wonky.
 This will run the instance, but there is no automated test at the moment.
 
 ```
-run-hq-instance --stack=prod --color= -nextcolor-
+run-hq-instance --stack=prod --color=blue
+run-hq-instance --stack=prod --color=teal
 ```
 
