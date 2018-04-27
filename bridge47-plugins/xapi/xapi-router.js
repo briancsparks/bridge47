@@ -154,7 +154,7 @@ const main = function() {
             }
           });
 
-          return next();
+          return sg._200(req, res, result);
 
         }, function(next) {
 
