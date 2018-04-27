@@ -86,7 +86,7 @@ sacurl -sS 'https://b47console.${domain_name}/echo/api/v1/${color}/foobar' | jq 
 sacurl -sS 'https://b47console.${domain_name}/ntl/xapi/v1/${color}/feed?clientId=asdf&watch=bsdf&expectJson=1' | jq '.'
 
 #          ---- Send data to a data feed
-curl -sS "http://${web_color}-b47.mobiledevassist.net/ntl/api/v1/${color}/ingest?sessionId=bsdf-12345478" -d '{"payload":[{"a":42}]}' -H 'application/json'
+curl -sS "http://${web_color}-b47.${domain_name}/ntl/api/v1/${color}/ingest?sessionId=bsdf-12345478" -d '{"payload":[{"a":42}]}' -H 'application/json'
 
 #          ---- Send data to a data feed manually using redis
 redis-cli LPUSH river:feed:asdf '{"payload":[{"a":42}]}'

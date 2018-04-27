@@ -2,9 +2,10 @@
 
 eval "$(cli-shezargs $@)"
 
+[[ -n $verbose        ]] && ava_verbose="--verbose"
 [[ -n $main_color   ]] && export TEST_MAINCOLOR="$main_color"
 [[ -n $next_color   ]] && export TEST_NEXTCOLOR="$next_color"
 [[ -n $stack        ]] && export TEST_STACK="$stack"
 
-ava --verbose systemtest/test-next-webtier-routing.js
+ava ${ava_verbose} systemtest/test-next-webtier-routing.js
 

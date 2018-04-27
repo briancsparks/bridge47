@@ -36,7 +36,6 @@ const hqFqdn                  = stack === 'test' ? `${hqSubdomain}.mobiledevassi
 const xapiFqdn                = stack === 'test' ? `${xapiSubdomain}.mobiledevassist.net` : `${xapiSubdomain}.mobilewebassist.net`;
 
 const test                    = require('ava');
-console.log({stack, rsvrMain});
 const numGetJsonPlan          = 3;
 
 // Unconditional:
