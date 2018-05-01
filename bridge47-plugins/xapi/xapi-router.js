@@ -164,6 +164,21 @@ const main = function() {
 
         }, function(next) {
 
+          // Is the request for the web-tiers color?
+          if (route0 !== 'echowebtiercolor') { return next(); }
+
+          var result = {};
+
+          _.each(process.env, (value, key) => {
+            if (value.match(/^B47_/)) {
+              result[key] = value;
+            }
+          });
+
+          return sg._200(req, res, result);
+
+        }, function(next) {
+
           if (route0) {
             serviceNames.push({path:'/'+[projectId, apiType, version, color, route0].join('/'), rest: restOfUrl, search});
             serviceNames.push({path:'/'+[projectId, apiType, version, color].join('/'), rest: _.compact([route0, restOfUrl]).join('/'), search});
