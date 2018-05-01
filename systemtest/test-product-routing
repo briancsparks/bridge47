@@ -9,5 +9,5 @@ eval "$(cli-shezargs $@)"
 [[ -n $service      ]] && export TEST_SERVICE="$service"
 [[ -n $stack        ]] && export TEST_STACK="$stack"
 
-ava ${ava_verbose} systemtest/test-webtier-routing.js
+ava ${ava_verbose} systemtest/test-product-routing.js
 

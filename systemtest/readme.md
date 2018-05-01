@@ -113,6 +113,13 @@ ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack=prod
 ./systemtest/test-webtier-routing --main-color=teal
 ```
 
+* Test that other services are still working.
+
+```
+./systemtest/test-product-routing --product=ntl --service=telemetry --main-color=blue
+./systemtest/test-product-routing --product=ntl --service=telemetry --main-color=teal
+```
+
 * Shut down all instances except the web-tier
 
 Deploy New Production hq Server

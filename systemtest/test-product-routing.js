@@ -1,8 +1,8 @@
 
 /**
- *  Tests that routing to the named webtier is working.
+ *  Tests that routing to the named product is working.
  *
- *  ./systemtest/test-webtier-routing --main-color=color
+ *  ./systemtest/test-product-routing --main-color=color
  *
  */
 const sg                      = require('sgsg');
@@ -64,7 +64,7 @@ test.cb(`hq routes to main (${mainColor})`, t => {
     if (echoUrl) {
 
       const url             = urlLib.parse(echoUrl, true);
-      const foundMainColor  = _.first(_.compact(url.hostname.split('-')));
+      const foundMainColor  = _.last(_.compact(url.pathname.split('/')));
 
       log(t, {echoUrl, mainColor, foundMainColor});
 
@@ -74,31 +74,6 @@ test.cb(`hq routes to main (${mainColor})`, t => {
   });
 
 });
-
-test.cb(`hq routes to main (${mainColor}) without rsvr`, t => {
-  t.plan(2 + numGetJsonPlan);
-
-  const url = `http://${hqFqdn}/${product}/clientStart`;
-  getJson(t, url, (err, body) => {
-    const echoUrl = sg.deref(body, `upstreams.${service}`);
-
-    t.truthy(echoUrl);
-
-    if (echoUrl) {
-
-      const url             = urlLib.parse(echoUrl, true);
-      const foundMainColor  = _.first(_.compact(url.hostname.split('-')));
-
-      log(t, {echoUrl, mainColor, foundMainColor});
-
-      t.is(foundMainColor, `${mainColor}`);
-    }
-    t.end();
-  });
-
-});
-
-
 
 
 
