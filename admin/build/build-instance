@@ -21,7 +21,7 @@ iam_instance_profile="Arn=arn:aws:iam::084075158741:instance-profile/${nsX}-web-
 #user_data="file://${userdata_file}"
 ip="10.${my_classb}.2.9"
 subnet_id="$my_subnet_id"
-image_id="ami-6dfe5010"
+image_id="ami-9c56efe3"
 count=1
 
 eval "$(cli-shezargs $@)"
@@ -91,9 +91,11 @@ aws_ec2() {
 #
 # This list fetched 04/24/2018
 #
-# us-east-1  xenial   16.04 LTS  amd64  hvm:ebs-ssd  20180405  ami-6dfe5010  hvm
-# us-east-1  trusty   14.04 LTS  amd64  hvm:ebs-ssd  20180404  ami-d8359ca5  hvm
-# us-east-1  precise  12.04 LTS  amd64  hvm:ebs-ssd  20170502  ami-a04529b6  hvm
+# us-east-1  bionic  18.04 LTS amd64 hvm:ebs-ssd 20180426.2  ami-7ad76705  hvm
+# us-east-1  xenial  16.04 LTS amd64 hvm:ebs-ssd 20180427    ami-9c56efe3  hvm
+# us-east-1  trusty  14.04 LTS amd64 hvm:ebs-ssd 20180423    ami-2cb00453  hvm
+# us-east-1  precise 12.04 LTS amd64 hvm:ebs-ssd 20170502    ami-a04529b6  hvm
+
 
 os_name="xenial"
 agent_port="12345"
