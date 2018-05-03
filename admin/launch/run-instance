@@ -31,6 +31,12 @@ ip="10.${my_classb}.3.9"
 subnet_id="$my_subnet_id"
 count=1
 
+# Determine the DB and util servers
+[[ -n $SERVERASSIST_UTIL_HOSTNAME  ]] && util_ip="$SERVERASSIST_UTIL_HOSTNAME"
+[[ -n $SERVERASSIST_UTIL_IP        ]] && util_ip="$SERVERASSIST_UTIL_IP"
+[[ -n $SERVERASSIST_DB_HOSTNAME  ]]   &&   db_ip="$SERVERASSIST_DB_HOSTNAME"
+[[ -n $SERVERASSIST_DB_IP        ]]   &&   db_ip="$SERVERASSIST_DB_IP"
+
 eval "$(cli-shezargs $@)"
 
 [[ -z $acct   ]] && acct="$acctX"
@@ -137,8 +143,18 @@ wait_for_start $ip
 sshix $ip "local/scripts/01-bootstrap --setenv NAMESPACE $ns"
 sshix $ip "local/scripts/01-bootstrap --setenv B47_COLOR ${env_color}"
 sshix $ip "local/scripts/01-bootstrap --setenv B47_TIER  ${tier}"
-
 sshix $ip "local/scripts/01-bootstrap --setenv B47_STACK ${stack}"
+
+if [[ -n $db_ip ]]; then
+  sshix $ip "local/scripts/01-bootstrap --setenv SERVERASSIST_DB_IP ${db_ip}"
+  sshix $ip "local/scripts/01-bootstrap --setenv SERVERASSIST_DB_HOSTNAME ${db_ip}"
+fi
+
+if [[ -n $util_ip ]]; then
+  sshix $ip "local/scripts/01-bootstrap --setenv SERVERASSIST_UTIL_IP ${util_ip}"
+  sshix $ip "local/scripts/01-bootstrap --setenv SERVERASSIST_UTIL_HOSTNAME ${util_ip}"
+fi
+
 if [[ ${stack} == prod ]]; then
   sshix $ip "local/scripts/01-bootstrap --setenv NODE_ENV production"
 fi
@@ -161,8 +177,8 @@ echo "Waiting to let instance start listening..."
 sleep 5
 
 # ---------- Fix /etc/hosts ----------
-curl -sS "http://$ip:12340/etchosts?ip=10.12.21.4&name=redis"
-curl -sS "http://$ip:12340/etchosts?ip=10.12.21.229&name=db"
+curl -sS "http://$ip:12340/etchosts?ip=${util_ip}&name=redis"
+curl -sS "http://$ip:12340/etchosts?ip=${db_ip}&name=db"
 
 # ----------- done -----------
 echo ""
