@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+#
+# Run and link Tenable
+#
+
+eval "$(cli-shezargs $@)"
+
+[[ -z $tenable_io_key  ]] && die "Need the Tenable.io key as \$tenable_IO_key"
+
+
+# --------------------------
+mkdir -p ~/zz_packages && cd $_
+
+curl -s -O "https://s3.amazonaws.com/mobilewebprint-deploy/buildout/packages/NessusAgent-6.10.7-ubuntu1110_amd64.deb"
+sudo dpkg -i "$(find ./ -maxdepth 1 -type f | egrep 'NessusAgent.*\.deb$')"
+
+
+
+# --------------------------
+if [[ $B47_STACK == prod ]]; then
+  export group_name="mario-prod"
+else
+  export group_name="mario-dev"
+fi
+
+sudo /opt/nessus_agent/sbin/nessuscli agent link --key="$tenable_io_key" --host=cloud.tenable.com --port=443 --groups="$group_name" --name="${HOSTNAME}"
+sleep 3
+sudo service nessusagent start
+
+
