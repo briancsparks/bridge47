@@ -303,7 +303,7 @@ const mainOrNext  = {
 
 bootstrap = function(callback) {
   const dbAddress = process.env.SERVERASSIST_DB_IP;
-  var   dbUrl     = 'mongodb://10.12.21.229:27017/'+namespace;
+  var   dbUrl     = 'mongodb://db:27017/'+namespace;
 
   var   db, config = {};
 

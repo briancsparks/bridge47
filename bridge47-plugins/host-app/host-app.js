@@ -84,8 +84,7 @@ const main = function(callback) {
 
 bootstrap = function(name, outerCb, abort, callback) {
 
-  const dbAddress = process.env.SERVERASSIST_DB_IP                  || '10.12.21.229';
-  var   dbUrl     = `mongodb://${dbAddress}:27017/${namespace}`;
+  var   dbUrl     = `mongodb://db:27017/${namespace}`;
   var   db, config = {};
 
   return sg.__run([function(next) {
