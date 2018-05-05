@@ -6,7 +6,7 @@
 
 eval "$(cli-shezargs $@)"
 
-[[ -z $tenable_io_key  ]] && die "Need the Tenable.io key as \$tenable_IO_key"
+[[ -z $tenable_io_key  ]] && die "Need the Tenable.io key as \$tenable_io_key"
 
 
 # --------------------------

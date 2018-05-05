@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+eval "$(cli-shezargs $@)"
+
+sudo /opt/nessus_agent/sbin/nessuscli agent unlink
+
