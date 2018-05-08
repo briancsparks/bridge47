@@ -11,6 +11,14 @@ eval "$(cli-shezargs $@)"
 
 [[ -z $ip   ]] && die "Need --ip="
 
+# ----- Nessus agent
+env
+echo "=================================== Run nessus? $stack"
+if [[ $stack == prod ]]; then
+  echo "running nessus"
+  sshix $ip "cd ~/dev/bridge47/admin/build/on-instance/ && ./zz2-extra"
+fi
+
 # ----- no-domain
 curl -sS "http://$ip:12340/file/etc/nginx/nginx.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 sshix $ip "cd ~/dev/bridge47/bridge47-plugins/xapi && pm2 start xapi-router.js --name xapi -- --port=$(cat /tmp/config.json | jq -r '.routerPort')"

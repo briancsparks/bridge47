@@ -1,5 +1,20 @@
 #!/bin/bash -e
 
+#
+# Runs an hq instance.
+#
+#   * Configs nginx with fqdns: console.mobilewebasist.net; xapi.mwp.net; and hq.mwp.net
+#
+# Note: Regarding fqdns:
+#   * it might be mobilewebassist.net or mobiledevassist.net, depending on prod/non-prod.
+#   * it might be 'console' or 'b47console' (the same for xapi and hq).
+#
+*   * hq is https
+#   * xapi and console require https and client-side certs
+#    * however, currently, xapi does not require client-side certs
+#
+
+# Defaults
 stack="cluster"
 domain_name="mobiledevassist.net"
 
@@ -10,6 +25,7 @@ hq_subd="b47hq"
 xapi_subd="b47xapi"
 console_subd="b47console"
 
+# Process cli args
 eval "$(cli-shezargs $@)"
 
 ns="$NAMESPACE"

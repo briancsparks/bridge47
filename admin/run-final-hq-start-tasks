@@ -1,5 +1,18 @@
 #!/bin/bash -e
 
+#
+# The final step is to startup the right services on the instance.
+#
+# * Nessus agent
+#
+# * pm2 start various handlers:
+#  * no-domain
+#  * xapi
+#  * clientStart
+#
+# * nginx
+#
+
 domain_name="mobiledevassist.net"
 hq_subd="b47hq"
 xapi_subd="b47xapi"
@@ -12,6 +25,11 @@ eval "$(cli-shezargs $@)"
 
 if [[ $stack == prod ]]; then
   domain_name="mobilewebassist.net"
+fi
+
+# ----- Nessus agent
+if [[ $stack == prod ]]; then
+  sshix $ip "cd ~/dev/bridge47/admin/build/on-instance/ && ./zz2-extra"
 fi
 
 # ----- no-domain

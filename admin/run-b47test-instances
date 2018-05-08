@@ -1,17 +1,20 @@
 #!/bin/bash -e
 
 #
-# Run a test hq server (grey), a web-instance (grey), and an echo server (grey and gold)
+# Run a test hq server (grey), a web-instance (grey), and 2 echo servers (grey and gold)
 #
 #
 #
 
+# Defaults
 instance_type="t2.small"
 main_color="grey"
 next_color="gold"
 
+# Get cli args
 eval "$(cli-shezargs $@)"
 
+# Process the cli args
 if [[ -n $stack ]]; then
   if [[ $stack == prod ]]; then
     hq_extra=" --stack=${stack} --hq-subd=b47hq2 --xapi-subd=b47xapi2 --console-subd=b47console2"
@@ -21,10 +24,14 @@ else
   stack="test"
 fi
 
+final_extra=" --stack=${stack}"
+
+# Be able to handle the prod account
 if [[ $stack == prod ]]; then
   assumed_acct="pub"
 fi
 
+# TODO: warning here.
 [[ -z $webtier_color  ]] && webtier_color="$main_color"
 
 # ---------- hq ----------
@@ -40,14 +47,14 @@ else
 fi
 
 # ---------- web-tier ----------
-announce "run-blue-green-web-instance --color=${webtier_color} --stack=${stack}"
-#run-blue-green-web-instance --color=${webtier_color} --stack=${stack} --instance-type=${instance_type}
-run-blue-green-web-instance --color=${webtier_color} --stack=${stack}
+announce "run-blue-green-web-instance --color=${webtier_color} --stack=${stack} --delay-finishing"
+run-blue-green-web-instance --color=${webtier_color} --stack=${stack} --delay-finishing
 ipB="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
 
 # Update the DB, so that the project `b47test` has the just-set color for the web-tier
 ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack="${stack}" --project-id=b47test --color="${webtier_color}"
 
+run-final-blue-green-web-instance-start-tasks --ip=${ipB} ${final_extra}
 
 # echo server ---------- grey ----------
 announce "run-app-instance --color=${main_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
@@ -60,7 +67,7 @@ aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --ta
 # Deploy our code onto the new instance
 zoom-run --ip=${ipC} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=${main_color} --stack=${stack} --project=b47test
 
-run-final-app-instance-start-tasks --ip=${ipC}
+run-final-app-instance-start-tasks --ip=${ipC} ${final_extra}
 
 # echo server ---------- gold ----------
 announce "run-app-instance --color=${next_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
@@ -73,7 +80,7 @@ aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --ta
 # Deploy our code onto the new instance
 zoom-run --ip=${ipD} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=${next_color} --stack=${stack} --project=b47test
 
-run-final-app-instance-start-tasks --ip=${ipD}
+run-final-app-instance-start-tasks --ip=${ipD} ${final_extra}
 
 echo ""
 echo " terminate-instances $ipA $ipC $ipD $ipB ${ti_extra}"

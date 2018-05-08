@@ -1,10 +1,14 @@
 #!/bin/bash -e
 
+tenable_io_key="$TENABLE_IO_KEY"
+
+eval "$(cli-shezargs $@)"
+
+echo "running zz2-extra"
+
 #
 # Run and link Tenable
 #
-
-eval "$(cli-shezargs $@)"
 
 [[ -z $tenable_io_key  ]] && die "Need the Tenable.io key as \$tenable_io_key"
 

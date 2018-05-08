@@ -128,7 +128,8 @@ if [[ $osversion != precise ]]; then
 fi
 
 # ---------- sshd ----------
-echo 'AcceptEnv AWS_ACCESS_KEY_ID' |      sudo tee -a /etc/ssh/sshd_config
+echo 'AcceptEnv AWS_ACCESS_KEY_ID'      | sudo tee -a /etc/ssh/sshd_config
 echo 'AcceptEnv AWS_SECRET_ACCESS_KEY'  | sudo tee -a /etc/ssh/sshd_config
+echo 'AcceptEnv TENABLE_IO_KEY'         | sudo tee -a /etc/ssh/sshd_config
 
 

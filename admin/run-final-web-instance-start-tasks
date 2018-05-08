@@ -5,6 +5,11 @@ eval "$(cli-shezargs $@)"
 [[ -z $ip   ]] && die "Need --ip="
 [[ -z $fqdn ]] && die "Need --fqdn="
 
+# ----- Nessus agent
+if [[ $stack == prod ]]; then
+  sshix $ip "cd ~/dev/bridge47/admin/build/on-instance/ && ./zz2-extra"
+fi
+
 # ----- no-domain
 curl -sS "http://$ip:12340/file/etc/nginx/nginx.conf" | egrep '# CONFIG_JSON ' | sed 's/^[^{[]*//g' > /tmp/config.json
 sshix $ip "cd ~/dev/bridge47/bridge47-plugins/no-domain/ && pm2 start no-domain.js -- port=$(cat /tmp/config.json | jq -r '.routerPort')"
