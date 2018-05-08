@@ -10,7 +10,10 @@ echo "running zz2-extra"
 # Run and link Tenable
 #
 
-[[ -z $tenable_io_key  ]] && die "Need the Tenable.io key as \$tenable_io_key"
+if [[ -z $tenable_io_key  ]]; then
+  echo "Need tenable key to install nessus"
+  exit 0
+fi
 
 
 # --------------------------

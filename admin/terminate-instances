@@ -18,7 +18,7 @@ fi
 
 for ip in "$@"; do
   echo "--- $ip"
-  sshix $ip '[[ -f build-scripts/on-instance/z01-pre-terminate ]] && build-scripts/on-instance/z01-pre-terminate || true'
+  sshix $ip '[[ -f ~/dev/bridge47/admin/build/on-instance/90-teardown ]] && ~/dev/bridge47/admin/build/on-instance/90-teardown || true'
 done
 
 for ip in "$@"; do

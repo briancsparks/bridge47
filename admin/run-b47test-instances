@@ -35,52 +35,60 @@ fi
 [[ -z $webtier_color  ]] && webtier_color="$main_color"
 
 # ---------- hq ----------
-announce "run-hq-instance --color=${main_color} --instance-type=${instance_type} ${hq_extra}"
-run-hq-instance --color=${main_color} --instance-type=${instance_type} ${hq_extra}
-ipA="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
+if [[ -z $skip_hq ]]; then
+  announce "run-hq-instance --color=${main_color} --instance-type=${instance_type} ${hq_extra}"
+  run-hq-instance --color=${main_color} --instance-type=${instance_type} ${hq_extra}
+  ipA="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
 
-if [[ $stack == test ]]; then
-  assign-fqdn --fqdn=b47hq.mobiledevassist.net --ip=${ipA}
-else
-  assign-fqdn --fqdn=b47hq2.mobilewebassist.net --ip=${ipA} --stack=${stack}
-  #echo "----------------------- Skipping assigning fqdn -------------------------"
+  if [[ $stack == test ]]; then
+    assign-fqdn --fqdn=b47hq.mobiledevassist.net --ip=${ipA}
+  else
+    assign-fqdn --fqdn=b47hq2.mobilewebassist.net --ip=${ipA} --stack=${stack}
+    #echo "----------------------- Skipping assigning fqdn -------------------------"
+  fi
 fi
 
 # ---------- web-tier ----------
-announce "run-blue-green-web-instance --color=${webtier_color} --stack=${stack} --delay-finishing"
-run-blue-green-web-instance --color=${webtier_color} --stack=${stack} --delay-finishing
-ipB="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
+if [[ -z $skip_webtier ]]; then
+  announce "run-blue-green-web-instance --color=${webtier_color} --stack=${stack} --delay-finishing"
+  run-blue-green-web-instance --color=${webtier_color} --stack=${stack} --delay-finishing
+  ipB="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
 
-# Update the DB, so that the project `b47test` has the just-set color for the web-tier
-ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack="${stack}" --project-id=b47test --color="${webtier_color}"
+  # Update the DB, so that the project `b47test` has the just-set color for the web-tier
+  ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack="${stack}" --project-id=b47test --color="${webtier_color}"
 
-run-final-blue-green-web-instance-start-tasks --ip=${ipB} ${final_extra}
+  run-final-blue-green-web-instance-start-tasks --ip=${ipB} ${final_extra}
+fi
 
 # echo server ---------- grey ----------
-announce "run-app-instance --color=${main_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
-run-app-instance --color=${main_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}
-ipC="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
-instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceId')"
+if [[ -z $skip_app1 ]]; then
+  announce "run-app-instance --color=${main_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
+  run-app-instance --color=${main_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}
+  ipC="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
+  instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceId')"
 
-aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-${main_color}-echo"
+  aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-${main_color}-echo"
 
-# Deploy our code onto the new instance
-zoom-run --ip=${ipC} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=${main_color} --stack=${stack} --project=b47test
+  # Deploy our code onto the new instance
+  zoom-run --ip=${ipC} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=${main_color} --stack=${stack} --project=b47test
 
-run-final-app-instance-start-tasks --ip=${ipC} ${final_extra}
+  run-final-app-instance-start-tasks --ip=${ipC} ${final_extra}
+fi
 
 # echo server ---------- gold ----------
-announce "run-app-instance --color=${next_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
-run-app-instance --color=${next_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}
-ipD="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
-instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceId')"
+if [[ -z $skip_app2 ]]; then
+  announce "run-app-instance --color=${next_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}"
+  run-app-instance --color=${next_color} --stack=${stack} --delay-finishing --instance-type=${instance_type}
+  ipD="$(cat /tmp/run-instance-result.json | jq -r .Instances[].PrivateIpAddress)"
+  instance_id="$(cat /tmp/run-instance-result.json | jq -r '.Instances[].InstanceId')"
 
-aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-${next_color}-echo"
+  aws-assumed-role "$assumed_acct" ec2 create-tags --resources "$instance_id" --tags "Key=Name,Value=b47test-${next_color}-echo"
 
-# Deploy our code onto the new instance
-zoom-run --ip=${ipD} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=${next_color} --stack=${stack} --project=b47test
+  # Deploy our code onto the new instance
+  zoom-run --ip=${ipD} --label=ingest --script="${scripts_dir}/b47test/on-instance/deploy-b47test-instance" --color=${next_color} --stack=${stack} --project=b47test
 
-run-final-app-instance-start-tasks --ip=${ipD} ${final_extra}
+  run-final-app-instance-start-tasks --ip=${ipD} ${final_extra}
+fi
 
 echo ""
 echo " terminate-instances $ipA $ipC $ipD $ipB ${ti_extra}"
