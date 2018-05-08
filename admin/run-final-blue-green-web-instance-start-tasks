@@ -16,6 +16,12 @@ eval "$(cli-shezargs $@)"
 [[ -z $color  ]] && die "Need --color="
 [[ -z $stack  ]] && die "Need --stack="
 
+if [[ $stack == test ]]; then
+  domain_name="mobiledevassist.net"
+elif [[ $stack == prod ]]; then
+  domain_name="mobilewebassist.net"
+fi
+
 # ----- Nessus agent
 if [[ $stack == prod ]]; then
   sshix $ip "cd ~/dev/bridge47/admin/build/on-instance/ && ./zz2-extra"

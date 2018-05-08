@@ -57,7 +57,7 @@ if [[ -z $skip_webtier ]]; then
   # Update the DB, so that the project `b47test` has the just-set color for the web-tier
   ra invoke "$(fnn ~/dev bridge47/lib/cluster-db\.js$)" updateWebTier --stack="${stack}" --project-id=b47test --color="${webtier_color}"
 
-  run-final-blue-green-web-instance-start-tasks --ip=${ipB} ${final_extra}
+  run-final-blue-green-web-instance-start-tasks --ip=${ipB} --color=${webtier_color} --domain-name=$domain_name ${final_extra}
 fi
 
 # echo server ---------- grey ----------

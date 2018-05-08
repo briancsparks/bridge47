@@ -9,7 +9,7 @@
 #   * it might be mobilewebassist.net or mobiledevassist.net, depending on prod/non-prod.
 #   * it might be 'console' or 'b47console' (the same for xapi and hq).
 #
-*   * hq is https
+#   * hq is https
 #   * xapi and console require https and client-side certs
 #    * however, currently, xapi does not require client-side certs
 #
