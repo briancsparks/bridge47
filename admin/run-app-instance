@@ -25,6 +25,6 @@ curl -sS "http://$ip:12340/root-config"
 
 # Only start the server if the caller wants
 if [[ -z $delay_finishing ]]; then
-  ${scripts_dir}/run-final-app-instance-start-tasks --ip=${ip}
+  ${scripts_dir}/run-final-app-instance-start-tasks --ip=${ip} --stack=${stack}
 fi
 

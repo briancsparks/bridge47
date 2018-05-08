@@ -12,10 +12,7 @@ eval "$(cli-shezargs $@)"
 [[ -z $ip   ]] && die "Need --ip="
 
 # ----- Nessus agent
-env
-echo "=================================== Run nessus? $stack"
 if [[ $stack == prod ]]; then
-  echo "running nessus"
   sshix $ip "cd ~/dev/bridge47/admin/build/on-instance/ && ./zz2-extra"
 fi
 
