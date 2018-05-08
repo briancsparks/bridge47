@@ -2,5 +2,7 @@
 
 eval "$(cli-shezargs $@)"
 
-sudo /opt/nessus_agent/sbin/nessuscli agent unlink
+if [[ -x /opt/nessus_agent/sbin/nessuscli ]]; then
+  sudo /opt/nessus_agent/sbin/nessuscli agent unlink
+fi
 
