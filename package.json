@@ -32,5 +32,10 @@
   },
   "devDependencies": {
     "ava": "^0.24.0"
+  },
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
   }
 }
