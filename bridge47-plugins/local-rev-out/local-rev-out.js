@@ -31,10 +31,10 @@ const USER                    = process.env.USER;
 var lib = {};
 
 const main = function(callback) {
-
+console.log('main');
   var   ip          = ARGV.ip           || '127.0.0.1';
   const port        = ARGV.port         || 5777;
-  const protocol    = ARGV.protocol     || 'https';
+  const protocol    = ARGV.protocol     || 'http';
   const domainName  = ARGV.domain       || 'mobilewebassist.net';
   const subDomain   = ARGV.sub_domain   || 'b47console';
   const targetFqdn  = ARGV.target       || `${subDomain}.${domainName}`;
