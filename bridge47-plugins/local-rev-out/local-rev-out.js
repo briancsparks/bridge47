@@ -6,6 +6,9 @@
  *  $ pm2 start bridge47-plugins/local-rev-out/local-rev-out.js --watch -- --port=5777 --main
  *  $ sudo nginx -t && sudo nginx
  *
+ *  You also need sacurl.
+ *  You also need nginx.conf files.
+ *
  *
  */
 const sg                      = require('sgsg');
